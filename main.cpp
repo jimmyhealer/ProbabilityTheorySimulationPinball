@@ -118,7 +118,7 @@ int main(int argv, char** args) {
           con = !con;
         } else if (event.key.keysym.sym == SDLK_h) {
           help = !help;
-        } else if (event.key.keysym.sym == SDLK_s) {
+        } else if (event.key.keysym.sym == SDLK_s && SDL_GetTicks() - screenshot_timer > 1000) {
           std::time_t result = std::time(nullptr);
           SDL_Surface* sshot =
               SDL_CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0x00ff0000, 0x0000ff00,
