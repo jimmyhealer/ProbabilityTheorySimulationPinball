@@ -1,0 +1,1 @@
+cd bin && g++ -c ../lib/SDL_FontCache.c -o ../lib/SDL_FontCache.o && g++ main.cpp ../lib/SDL_FontCache.o -o ../build/main -lmingw32 -lSDL2main -lSDL2_ttf -lSDL2 && cd ..
