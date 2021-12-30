@@ -7,11 +7,12 @@
 #include <iostream>
 #include <random>
 
-#include "../lib/SDL_FontCache.h"
+#include "lib/SDL_FontCache.h"
 using namespace std;
 mt19937 gen(0x5EED);
 int randint(int lb, int ub) {
   return uniform_int_distribution<int>(lb, ub)(gen);
+  // return round(normal_distribution<>{(ub - lb) / 2, 20}(gen));
 }
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -35,13 +36,13 @@ int main(int argv, char** args) {
   FC_Font* h2 = FC_CreateFont();
   FC_Font* h3 = FC_CreateFont();
   FC_Font* p = FC_CreateFont();
-  FC_LoadFont(font, renderer, "../sources/minu.ttf", 60, FC_MakeColor(0, 200, 0, 255),
+  FC_LoadFont(font, renderer, "sources/minu.ttf", 60, FC_MakeColor(0, 200, 0, 255),
               TTF_STYLE_NORMAL);
-  FC_LoadFont(h2, renderer, "../sources/minu.ttf", 40, FC_MakeColor(255, 255, 255, 255),
+  FC_LoadFont(h2, renderer, "sources/minu.ttf", 40, FC_MakeColor(255, 255, 255, 255),
               TTF_STYLE_NORMAL);
-  FC_LoadFont(h3, renderer, "../sources/minu.ttf", 22, FC_MakeColor(255, 255, 255, 255),
+  FC_LoadFont(h3, renderer, "sources/minu.ttf", 22, FC_MakeColor(255, 255, 255, 255),
               TTF_STYLE_NORMAL);
-  FC_LoadFont(p, renderer, "../sources/minu.ttf", 16, FC_MakeColor(255, 255, 255, 255),
+  FC_LoadFont(p, renderer, "sources/minu.ttf", 16, FC_MakeColor(255, 255, 255, 255),
               TTF_STYLE_NORMAL);
 
   SDL_StartTextInput();
@@ -56,7 +57,7 @@ int main(int argv, char** args) {
     FC_DrawAlign(h2, renderer, 400, 270, FC_ALIGN_CENTER,
                  "模擬彈珠台掉落機率分布");
     FC_DrawAlign(h3, renderer, 400, 350, FC_ALIGN_CENTER,
-                 "指導教授：許玉平教授");
+                 "指導教授: 許玉平教授");
     // FC_DrawAlign(h3, renderer, 400, 450, FC_ALIGN_CENTER, "按任意繼續");
     float time = SDL_GetTicks() / 1000.0f;
     int rgb = (int)min(255, 255 - (int)(sin(time) * 127));
@@ -98,6 +99,7 @@ int main(int argv, char** args) {
   int ran1;
   int screenshot = 0;
   float screenshot_timer = 0;
+  float height_interval = 5.0;
   while (running) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -144,6 +146,9 @@ int main(int argv, char** args) {
     FC_DrawAlign(p, renderer, 100, 550, FC_ALIGN_CENTER, "%d", 0);
     FC_DrawAlign(p, renderer, 400, 550, FC_ALIGN_CENTER, "%d", 50);
     FC_DrawAlign(p, renderer, 700, 550, FC_ALIGN_CENTER, "%d", 100);
+    FC_DrawAlign(p, renderer, 80, 535, FC_ALIGN_CENTER, "%d", 0);
+    FC_DrawAlign(p, renderer, 80, 150, FC_ALIGN_CENTER, "%d", (int)(400.0 / height_interval));
+    FC_DrawAlign(p, renderer, 80, 342, FC_ALIGN_CENTER, "%d", (int)(400.0 / height_interval) / 2);
     FC_DrawAlign(h3, renderer, 640, 30, FC_ALIGN_RIGHT, "%s",
                  screenshot ? "已儲存截圖" : "");
     FC_DrawAlign(h3, renderer, 650, 30, FC_ALIGN_LEFT, "%s",
@@ -163,11 +168,19 @@ int main(int argv, char** args) {
         ran1 = 99 - ran1;
       }
       height[ran1]++;
+      // int b = -1;
+      // while(b < 0 || b > 100){
+      //   b = randint(0, 100);
+      // }
+      // SDL_Log("%d", b);
+      // height[b]++;
     }
+    int max_height = 0;
     for (int i = 0; i < 102; ++i) {
       a.x = i * 6 + 100;
-      a.h = height[i] * 5;
+      a.h = height[i] * height_interval;
       a.y = 550 - a.h;
+      max_height = max(max_height, a.h);
       if (i == ran1) {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderFillRect(renderer, &a);
@@ -175,6 +188,9 @@ int main(int argv, char** args) {
         continue;
       }
       SDL_RenderFillRect(renderer, &a);
+    }
+    if (max_height > 400) {
+      height_interval *= 0.8;
     }
     SDL_Delay(timer);
     SDL_RenderPresent(renderer);
