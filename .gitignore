@@ -2,3 +2,5 @@
 .clang-format
 *.bmp
 make.sh
+
+Output/
