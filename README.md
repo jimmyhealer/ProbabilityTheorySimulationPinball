@@ -2,11 +2,11 @@
 
 ## 建構必須環境
 
-Windows
-C++ MinGW
-SDL2-2.0.12
-SDL2_ttf
-SDL2_FontCache
+- Windows
+- C++ MinGW
+- SDL2-2.0.12
+- SDL2_ttf
+- SDL2_FontCache
 
 ## build
 
@@ -17,6 +17,11 @@ SDL2_FontCache
 ## 執行
 
 ```
-> cd build
 > main
+```
+
+## 修改原始碼
+
+```
+> vim main.cpp
 ```
